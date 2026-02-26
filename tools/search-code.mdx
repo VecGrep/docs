@@ -1,0 +1,41 @@
+---
+title: search_code
+description: Semantically search an indexed codebase
+---
+
+## Overview
+
+Embeds the query and performs cosine similarity search against indexed code chunks, returning the most semantically relevant snippets with file paths and line numbers.
+
+If the codebase is not yet indexed, it will be indexed automatically first.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `query` | `string` | required | Natural language description of what you're looking for |
+| `path` | `string` | required | Absolute path to the codebase root directory |
+| `top_k` | `integer` | `8` | Number of results to return (1–20) |
+
+## Example
+
+```
+search_code("how does user authentication work", "/path/to/myproject")
+```
+
+**Returns:**
+
+```
+[1] src/auth.py:45-72 (score: 0.87)
+def authenticate_user(token: str) -> User:
+    ...
+
+[2] src/middleware.py:12-28 (score: 0.81)
+...
+```
+
+## Notes
+
+- Queries are limited to 500 characters
+- Results include file path, line range, similarity score, and the code snippet
+- Auto-indexes on first call if no index exists for the given path

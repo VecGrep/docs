@@ -1,0 +1,30 @@
+---
+title: get_index_status
+description: Check index statistics for a project
+---
+
+## Overview
+
+Returns statistics about the current index for a project directory.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `path` | `string` | required | Absolute path to the indexed project directory |
+
+## Example
+
+```
+get_index_status("/path/to/myproject")
+```
+
+**Returns:**
+
+```
+Index status for: /path/to/myproject
+  Files indexed:  142
+  Total chunks:   1847
+  Last indexed:   2026-02-22T07:20:31+00:00
+  Index size:     28.4 MB
+```

@@ -1,0 +1,29 @@
+---
+title: Index Location
+description: Where VecGrep stores its index files
+---
+
+## Default location
+
+```
+~/.vecgrep/<sha256-of-absolute-project-path>/index.db
+```
+
+Each project gets its own isolated index based on a SHA-256 hash of the absolute project path.
+
+## Managing the index
+
+**Check index size and stats:**
+```
+get_index_status("/path/to/myproject")
+```
+
+**Wipe and rebuild the index:**
+```bash
+rm -rf ~/.vecgrep/<hash>/
+```
+
+Or use the `force=true` parameter:
+```
+index_codebase("/path/to/myproject", force=true)
+```

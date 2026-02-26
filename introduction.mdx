@@ -1,0 +1,46 @@
+---
+title: Introduction
+description: Cursor-style semantic code search as an MCP plugin for Claude Code
+---
+
+## What is VecGrep?
+
+VecGrep is a semantic code search tool that works as an MCP (Model Context Protocol) plugin for Claude Code.
+
+Instead of grepping 50 files and sending 30,000 tokens to Claude, VecGrep returns the top 8 semantically relevant code chunks (~1,600 tokens). That's a **~95% token reduction** for codebase queries.
+
+## How it works
+
+<Steps>
+  <Step title="Chunk">
+    Parses source files with tree-sitter to extract semantic units — functions, classes, and methods.
+  </Step>
+  <Step title="Embed">
+    Encodes each chunk locally using [`all-MiniLM-L6-v2-code-search-512`](https://huggingface.co/isuruwijesiri/all-MiniLM-L6-v2-code-search-512) (384-dim, ~80MB one-time download) via the fastembed ONNX backend (~100ms startup) or PyTorch.
+  </Step>
+  <Step title="Store">
+    Saves embeddings and metadata in LanceDB under `~/.vecgrep/<project_hash>/`.
+  </Step>
+  <Step title="Search">
+    Uses an ANN index (IVF-PQ) for fast approximate search on large codebases.
+  </Step>
+</Steps>
+
+Incremental re-indexing via mtime/size checks skips unchanged files.
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="95% token reduction" icon="arrow-down">
+    Returns only the top semantically relevant chunks instead of entire files.
+  </Card>
+  <Card title="Fast startup" icon="bolt">
+    ONNX backend starts in ~100ms. No PyTorch required by default.
+  </Card>
+  <Card title="Incremental indexing" icon="rotate">
+    Only re-indexes files that have changed since the last run.
+  </Card>
+  <Card title="Works automatically" icon="wand-magic-sparkles">
+    Claude decides when to call VecGrep — no manual invocation needed.
+  </Card>
+</CardGroup>

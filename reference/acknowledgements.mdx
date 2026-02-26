@@ -1,0 +1,26 @@
+---
+title: Acknowledgements
+description: Credits and citations
+---
+
+## Embedding model
+
+The default embedding model used by VecGrep is [`all-MiniLM-L6-v2-code-search-512`](https://huggingface.co/isuruwijesiri/all-MiniLM-L6-v2-code-search-512), a model fine-tuned specifically for semantic code search by [@isuruwijesiri](https://huggingface.co/isuruwijesiri).
+
+```bibtex
+@misc{all_MiniLM_L6_v2_code_search_512,
+  author    = {isuruwijesiri},
+  title     = {all-MiniLM-L6-v2-code-search-512},
+  year      = {2026},
+  publisher = {Hugging Face},
+  url       = {https://huggingface.co/isuruwijesiri/all-MiniLM-L6-v2-code-search-512}
+}
+```
+
+## Libraries
+
+- [fastembed](https://github.com/qdrant/fastembed) — ONNX Runtime-based embedding (default backend)
+- [sentence-transformers](https://www.sbert.net/) — PyTorch embedding backend
+- [LanceDB](https://lancedb.github.io/lancedb/) — vector store
+- [tree-sitter](https://tree-sitter.github.io/tree-sitter/) — AST-based code chunking
+- [MCP](https://modelcontextprotocol.io/) — Model Context Protocol

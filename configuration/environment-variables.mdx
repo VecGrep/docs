@@ -1,0 +1,21 @@
+---
+title: Environment Variables
+description: Configure VecGrep via environment variables
+---
+
+## Available variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `VECGREP_BACKEND` | `onnx` | Embedding backend: `onnx` or `torch` |
+| `VECGREP_MODEL` | `isuruwijesiri/all-MiniLM-L6-v2-code-search-512` | HuggingFace model ID |
+
+## Examples
+
+```bash
+# Use the PyTorch backend with a different model
+VECGREP_BACKEND=torch VECGREP_MODEL=sentence-transformers/all-MiniLM-L6-v2 vecgrep
+
+# Use a custom ONNX model
+VECGREP_MODEL=my-org/my-onnx-model vecgrep
+```

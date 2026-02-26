@@ -1,0 +1,23 @@
+---
+title: Supported Languages
+description: Languages with AST-based chunking support
+---
+
+## AST-chunked languages
+
+These languages use tree-sitter for semantic chunking — functions, classes, and methods are extracted as individual chunks:
+
+- Python
+- JavaScript / TypeScript
+- Rust
+- Go
+- Java
+- C / C++
+- Ruby
+- Swift
+- Kotlin
+- C#
+
+## Fallback: sliding window
+
+All other text files (`.txt`, `.md`, config files, etc.) fall back to sliding-window line chunks, ensuring no file is silently skipped.

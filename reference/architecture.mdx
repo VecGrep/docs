@@ -1,0 +1,40 @@
+---
+title: Architecture
+description: How VecGrep works under the hood
+---
+
+## Pipeline
+
+```
+Source files
+     │
+     ▼
+ [Chunker]  ──  tree-sitter AST → semantic chunks (functions, classes)
+     │           fallback: sliding-window for unsupported file types
+     │
+     ▼
+ [Embedder] ──  fastembed ONNX (default) or sentence-transformers (torch)
+     │           all-MiniLM-L6-v2-code-search-512 (384-dim)
+     │
+     ▼
+ [Store]    ──  LanceDB vector store (~/.vecgrep/<project_hash>/index.db)
+     │           IVF-PQ ANN index for sub-linear search
+     │           file_stats table for O(files) change detection
+     │
+     ▼
+ [Server]   ──  MCP server exposing index_codebase, search_code, get_index_status
+```
+
+## Index location
+
+Each project gets its own isolated index:
+
+```
+~/.vecgrep/<sha256-of-absolute-project-path>/index.db
+```
+
+Delete the directory to wipe the index and start fresh.
+
+## Change detection
+
+VecGrep tracks mtime and file size in a separate `file_stats` table. On re-index, only files whose mtime or size has changed are re-embedded — unchanged files are skipped in O(1) per file.

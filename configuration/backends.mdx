@@ -1,0 +1,36 @@
+---
+title: Backends
+description: Choose between the ONNX and PyTorch embedding backends
+---
+
+## Backend comparison
+
+| Backend | Startup | PyTorch required | Custom HF models |
+|---|---|---|---|
+| `onnx` (default) | ~100ms | No | ONNX-exported models only |
+| `torch` | ~2–3s | Yes | Any HuggingFace model |
+
+## ONNX backend (default)
+
+Uses [fastembed](https://github.com/qdrant/fastembed) with ONNX Runtime. Recommended for most users.
+
+- Fast startup (~100ms model load on first `embed()` call)
+- No PyTorch installation required
+- Works with ONNX-exported HuggingFace models
+
+```bash
+# Default — no configuration needed
+vecgrep
+```
+
+## PyTorch backend
+
+Uses [sentence-transformers](https://www.sbert.net/) with PyTorch. Use this when you need a model that isn't available in ONNX format.
+
+- Slower startup (~2–3s)
+- Supports any HuggingFace sentence-transformer model
+- Automatically uses Metal (Apple Silicon), CUDA (NVIDIA), or CPU
+
+```bash
+VECGREP_BACKEND=torch vecgrep
+```

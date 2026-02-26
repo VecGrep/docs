@@ -1,0 +1,36 @@
+---
+title: Installation
+description: Install VecGrep and register it with Claude Code
+---
+
+## Requirements
+
+- Python 3.12
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
+- [Claude Code](https://claude.ai/claude-code)
+
+<Note>
+  Python 3.12 is required — `tree-sitter-languages` does not yet have wheels for Python 3.13+.
+</Note>
+
+## Install VecGrep
+
+<CodeGroup>
+```bash uv (recommended)
+uv tool install --python 3.12 vecgrep
+```
+
+```bash pip
+pip install vecgrep
+```
+</CodeGroup>
+
+## Register with Claude Code
+
+Run once — works for every project:
+
+```bash
+claude mcp add --scope user vecgrep -- vecgrep
+```
+
+This registers VecGrep in your user config (`~/.claude.json`) so it's available globally across all projects. Starts instantly — no download delay on Claude Code launch.

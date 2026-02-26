@@ -1,0 +1,61 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "VecGrep",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#6366f1",
+    "light": "#818cf8",
+    "dark": "#4f46e5"
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/VecGrep/VecGrep"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://github.com/VecGrep/VecGrep"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "installation",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Tools",
+      "pages": [
+        "tools/index-codebase",
+        "tools/search-code",
+        "tools/get-index-status"
+      ]
+    },
+    {
+      "group": "Configuration",
+      "pages": [
+        "configuration/environment-variables",
+        "configuration/backends",
+        "configuration/supported-languages"
+      ]
+    },
+    {
+      "group": "Reference",
+      "pages": [
+        "reference/architecture",
+        "reference/index-location",
+        "reference/acknowledgements"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/VecGrep"
+  }
+}
