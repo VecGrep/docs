@@ -2,14 +2,14 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "VecGrep",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo.png",
+    "dark": "/logo.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/logo.png",
   "colors": {
-    "primary": "#6366f1",
-    "light": "#818cf8",
-    "dark": "#4f46e5"
+    "primary": "#F97316",
+    "light": "#FB923C",
+    "dark": "#EA6C00"
   },
   "topbarLinks": [
     {
