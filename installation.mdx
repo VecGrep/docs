@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Install VecGrep and register it with Claude Code
+description: Install, update, and uninstall VecGrep
 ---
 
 ## Requirements
@@ -13,11 +13,7 @@ description: Install VecGrep and register it with Claude Code
   Python 3.12 is required — `tree-sitter-languages` does not yet have wheels for Python 3.13+.
 </Note>
 
-## Dependencies (v2.0.0+)
-
-VecGrep v2.0.0 adds `networkx>=3.2` and `tree-sitter==0.21.3` (pinned) for the graph index. Both are installed automatically — no extra steps required.
-
-## Install VecGrep
+## Install
 
 <CodeGroup>
 ```bash uv (recommended)
@@ -38,3 +34,57 @@ claude mcp add --scope user vecgrep -- vecgrep
 ```
 
 This registers VecGrep in your user config (`~/.claude.json`) so it's available globally across all projects. Starts instantly — no download delay on Claude Code launch.
+
+## Update
+
+<CodeGroup>
+```bash uv
+uv tool upgrade vecgrep
+```
+
+```bash pip
+pip install --upgrade vecgrep
+```
+</CodeGroup>
+
+To install a specific version:
+
+<CodeGroup>
+```bash uv
+uv tool install --python 3.12 vecgrep==2.0.0
+```
+
+```bash pip
+pip install vecgrep==2.0.0
+```
+</CodeGroup>
+
+After upgrading, restart Claude Code to pick up the new version.
+
+## Uninstall
+
+<CodeGroup>
+```bash uv
+uv tool uninstall vecgrep
+```
+
+```bash pip
+pip uninstall vecgrep
+```
+</CodeGroup>
+
+Then remove the MCP registration from Claude Code:
+
+```bash
+claude mcp remove vecgrep
+```
+
+To also wipe all indexes (vector + graph) stored on disk, delete the VecGrep data directory:
+
+```
+~/.vecgrep/
+```
+
+## Dependencies (v2.0.0+)
+
+VecGrep v2.0.0 adds `networkx>=3.2` and `tree-sitter==0.21.3` (pinned) for the knowledge graph index. Both are installed automatically — no extra steps required.
