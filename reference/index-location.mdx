@@ -6,10 +6,21 @@ description: Where VecGrep stores its index files
 ## Default location
 
 ```
-~/.vecgrep/<sha256-of-absolute-project-path>/index.db
+~/.vecgrep/<sha256-of-absolute-project-path>/
 ```
 
-Each project gets its own isolated index based on a SHA-256 hash of the absolute project path.
+Each project gets its own isolated directory based on a SHA-256 hash of the absolute project path.
+
+## Layout
+
+```
+~/.vecgrep/<project_hash>/
+  lancedb/        # vector embeddings and ANN index (IVF-PQ)
+  merkle.json     # mtime/size fingerprints for incremental indexing
+  graph.json      # knowledge graph (nodes + edges) — created by index_graph
+```
+
+`graph.json` is only present after `index_graph` has been run. All other tools function without it.
 
 ## Managing the index
 
@@ -18,12 +29,13 @@ Each project gets its own isolated index based on a SHA-256 hash of the absolute
 get_index_status("/path/to/myproject")
 ```
 
-**Wipe and rebuild the index:**
+**Wipe and rebuild the full index (vector + graph):**
 ```bash
 rm -rf ~/.vecgrep/<hash>/
 ```
 
-Or use the `force=true` parameter:
+**Force rebuild via tool parameters:**
 ```
 index_codebase("/path/to/myproject", force=true)
+index_graph("/path/to/myproject", force=true)
 ```

@@ -25,4 +25,5 @@ index_codebase("/path/to/myproject")
 
 - Only re-indexes files whose mtime or size has changed since the last run
 - Use `force=true` to rebuild the index from scratch (e.g. after changing the embedding model)
-- The index is stored at `~/.vecgrep/<sha256-of-project-path>/index.db`
+- The index is stored under `~/.vecgrep/<sha256-of-project-path>/lancedb/` with a `merkle.json` fingerprint file
+- To also build the knowledge graph (for `search_graph`, `graph_neighbors`, `hybrid_search`), run `index_graph` after indexing

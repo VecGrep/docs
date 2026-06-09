@@ -3,7 +3,7 @@ title: Architecture
 description: How VecGrep works under the hood
 ---
 
-## Pipeline
+## Vector pipeline
 
 ```
 Source files
@@ -17,24 +17,53 @@ Source files
      │           all-MiniLM-L6-v2-code-search-512 (384-dim)
      │
      ▼
- [Store]    ──  LanceDB vector store (~/.vecgrep/<project_hash>/index.db)
+ [Store]    ──  LanceDB vector store (~/.vecgrep/<project_hash>/lancedb/)
      │           IVF-PQ ANN index for sub-linear search
-     │           file_stats table for O(files) change detection
+     │           merkle.json for O(files) change detection
      │
      ▼
- [Server]   ──  MCP server exposing index_codebase, search_code, get_index_status
+ [Server]   ──  MCP server exposing index_codebase, search_code, get_index_status,
+                hybrid_search
 ```
+
+## Graph pipeline
+
+```
+Source files
+     │
+     ▼
+ [AST parser]  ──  tree-sitter → nodes (file, function, class, method)
+     │               edges (contains, calls, imports, inherits)
+     │               no LLM — pure static analysis
+     │
+     ▼
+ [Store]       ──  networkx graph → ~/.vecgrep/<project_hash>/graph.json
+     │
+     ▼
+ [Server]      ──  MCP server exposing index_graph, search_graph, graph_neighbors
+```
+
+## Hybrid search
+
+`hybrid_search` blends both pipelines at query time:
+
+```
+score = alpha * vector_score + (1 - alpha) * graph_score
+```
+
+Default `alpha=0.6` weights semantic relevance slightly higher than structural connectivity. Degrades to pure vector search when `graph.json` is absent.
 
 ## Index location
 
-Each project gets its own isolated index:
+Each project gets its own isolated directory:
 
 ```
-~/.vecgrep/<sha256-of-absolute-project-path>/index.db
+~/.vecgrep/<sha256-of-absolute-project-path>/
+  lancedb/      # vector store
+  merkle.json   # change-detection fingerprints
+  graph.json    # knowledge graph (optional, created by index_graph)
 ```
-
-Delete the directory to wipe the index and start fresh.
 
 ## Change detection
 
-VecGrep tracks mtime and file size in a separate `file_stats` table. On re-index, only files whose mtime or size has changed are re-embedded — unchanged files are skipped in O(1) per file.
+VecGrep tracks mtime and file size in `merkle.json`. On re-index, only files whose mtime or size has changed are re-embedded — unchanged files are skipped in O(1) per file.

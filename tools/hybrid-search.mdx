@@ -1,0 +1,57 @@
+---
+title: hybrid_search
+description: Blend vector similarity and graph structure into a single ranked result
+---
+
+## Overview
+
+Combines vector (semantic) search with graph-structural scoring into a single ranked result set. The final score is a weighted blend:
+
+```
+score = alpha * vector_score + (1 - alpha) * graph_score
+```
+
+If no graph index exists, `hybrid_search` degrades gracefully to pure vector search — identical to `search_code`.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `query` | `string` | required | Natural language description of what you're looking for |
+| `path` | `string` | required | Absolute path to the codebase root directory |
+| `top_k` | `integer` | `8` | Number of results to return |
+| `alpha` | `float` | `0.6` | Weight given to vector score (0.0–1.0). `1.0` = pure vector, `0.0` = pure graph |
+| `min_score` | `float` | `0.0` | Minimum blended score threshold; results below this are filtered out |
+
+## Example
+
+```
+hybrid_search("how does token validation work", "/path/to/myproject")
+```
+
+**Returns:**
+
+```
+[1] src/tokens.py:34-61 (score: 0.89)
+def decode_jwt(token: str) -> dict:
+    ...
+
+[2] src/auth.py:45-72 (score: 0.84)
+def authenticate_user(token: str) -> User:
+    ...
+```
+
+## When to use
+
+| Query type | Recommended tool |
+|---|---|
+| Semantic / behaviour ("how does X work") | `search_code` or `hybrid_search` |
+| Structural / navigation ("where is X defined", "what calls Y") | `search_graph` |
+| Both semantic and structural context needed | `hybrid_search` |
+
+## Notes
+
+- Index the graph first with `index_graph` to unlock the graph component; without it, results are identical to `search_code`
+- Average ~3,324 tokens per result set (~87% reduction vs raw file reads)
+- Average latency ~76ms
+- Tune `alpha` toward `0.0` to weight structural connectivity more heavily; toward `1.0` for pure semantic relevance

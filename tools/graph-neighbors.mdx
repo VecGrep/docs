@@ -1,0 +1,58 @@
+---
+title: graph_neighbors
+description: Explore the structural neighbourhood of a graph node
+---
+
+## Overview
+
+Returns the immediate (or multi-hop) structural neighbourhood of a given node in the knowledge graph. Use this to navigate the codebase structure: find what a function calls, what calls it, what it imports, and what class it belongs to.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `node_id` | `string` | required | Node identifier (typically `kind:qualified_name`, e.g. `function:auth.authenticate_user`) |
+| `path` | `string` | required | Absolute path to the codebase root directory |
+| `depth` | `integer` | `1` | How many hops to traverse (1–4) |
+
+## Example
+
+```
+graph_neighbors("function:auth.authenticate_user", "/path/to/myproject", depth=1)
+```
+
+**Returns:**
+
+```
+Node: function:auth.authenticate_user (src/auth.py:45-72)
+
+callers (2):
+  function:middleware.require_auth  src/middleware.py:12
+  function:api.login_endpoint       src/api/auth.py:88
+
+callees (3):
+  function:db.get_user_by_token     src/db/users.py:201
+  function:tokens.decode_jwt        src/tokens.py:34
+  function:audit.log_access         src/audit.py:77
+
+contained_by (1):
+  file:src/auth.py
+```
+
+## Relationship directions
+
+| Relationship | Description |
+|---|---|
+| `callers` | Nodes that call this node |
+| `callees` | Nodes this node calls |
+| `imports` | Modules this node imports |
+| `contains` | Child nodes contained by this node |
+| `contained_by` | Parent node that contains this node |
+| `inherits` | Classes this class inherits from |
+
+## Notes
+
+- Requires `index_graph` to have been run first
+- `depth=1` returns direct neighbours only; higher values traverse transitively
+- Maximum depth is 4 — deeper traversals may return large result sets
+- Node IDs can be discovered via `search_graph`

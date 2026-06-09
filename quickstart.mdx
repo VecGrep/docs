@@ -12,6 +12,10 @@ You don't trigger VecGrep manually — Claude decides when to call the tools bas
 | "Index my project at /Users/me/myapp" | `index_codebase` |
 | "How does authentication work in this codebase?" | `search_code` |
 | "Find where database connections are set up" | `search_code` |
+| "Build a knowledge graph of my project" | `index_graph` |
+| "Where is the UserService class defined?" | `search_graph` |
+| "What does authenticate_user call?" | `graph_neighbors` |
+| "Find auth code, including structurally related files" | `hybrid_search` |
 | "How many files are indexed?" | `get_index_status` |
 
 ## Typical first-time flow
@@ -24,3 +28,15 @@ Claude: "Here's how payments work — in src/payments.py:42..."
 ```
 
 After the first index, subsequent searches skip unchanged files automatically — no re-indexing needed unless your code changes.
+
+## Using the knowledge graph
+
+```
+You:    "Build the graph index for /Users/me/myapp, then show me what PaymentService calls"
+Claude: [calls index_graph]
+Claude: [calls search_graph to locate PaymentService]
+Claude: [calls graph_neighbors to show its callees]
+Claude: "PaymentService.charge calls: stripe_client.create_charge, audit.log_payment, ..."
+```
+
+> The graph index is optional. All existing `search_code` workflows continue to work unchanged.

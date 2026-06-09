@@ -35,7 +35,11 @@
       "pages": [
         "tools/index-codebase",
         "tools/search-code",
-        "tools/get-index-status"
+        "tools/get-index-status",
+        "tools/index-graph",
+        "tools/search-graph",
+        "tools/graph-neighbors",
+        "tools/hybrid-search"
       ]
     },
     {

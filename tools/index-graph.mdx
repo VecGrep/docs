@@ -1,0 +1,49 @@
+---
+title: index_graph
+description: Build a knowledge graph of a codebase using AST analysis
+---
+
+## Overview
+
+Walks a project directory and extracts a knowledge graph using tree-sitter AST analysis — no LLM required. Nodes represent structural units (files, functions, classes, methods); edges represent relationships (contains, calls, imports, inherits).
+
+The graph is persisted as `graph.json` alongside the vector index and is used by `search_graph` and `graph_neighbors`. It is also blended into results by `hybrid_search` when present.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `path` | `string` | required | Absolute path to the codebase root directory |
+| `force` | `boolean` | `false` | If `true`, rebuilds the graph even if `graph.json` already exists |
+
+## Example
+
+```
+index_graph("/path/to/myproject")
+→ "Graph indexed: 312 node(s), 541 edge(s)"
+```
+
+## Node kinds
+
+| Kind | Description |
+|---|---|
+| `file` | A source file |
+| `function` | A top-level function |
+| `class` | A class definition |
+| `method` | A method inside a class |
+
+## Edge kinds
+
+| Kind | Description |
+|---|---|
+| `contains` | Parent file or class contains a child node |
+| `calls` | A function/method calls another |
+| `imports` | A file imports another module |
+| `inherits` | A class inherits from another |
+
+## Notes
+
+- Graph is stored at `~/.vecgrep/<project_hash>/graph.json`
+- Runs entirely locally — no network calls, no LLM
+- Use `force=true` after significant refactors to rebuild from scratch
+- `hybrid_search` degrades gracefully to pure vector search if no graph index exists

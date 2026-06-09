@@ -1,0 +1,54 @@
+---
+title: search_graph
+description: Keyword search over the knowledge graph node labels
+---
+
+## Overview
+
+Performs fast keyword search over graph node labels (function names, class names, file names). Returns structural metadata — kind, source file, line range, degree — without embedding or vector lookup.
+
+Use this tool for structural and navigation queries: "where is class X defined", "what files import Y", "find all methods named Z".
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `query` | `string` | required | Keyword or identifier to search for |
+| `path` | `string` | required | Absolute path to the codebase root directory |
+| `limit` | `integer` | `20` | Maximum number of results to return |
+
+## Example
+
+```
+search_graph("authenticate_user", "/path/to/myproject")
+```
+
+**Returns:**
+
+```
+[1] function authenticate_user
+    File: src/auth.py  Lines: 45–72
+    Score: 1.0  Degree: 7
+
+[2] method authenticate_user
+    File: src/legacy/auth.py  Lines: 110–138
+    Score: 0.91  Degree: 3
+```
+
+## Return fields
+
+| Field | Description |
+|---|---|
+| `kind` | Node type: `file`, `function`, `class`, `method` |
+| `source_file` | Path to the source file containing the node |
+| `start_line` | First line of the node |
+| `end_line` | Last line of the node |
+| `score` | Keyword match score (0–1) |
+| `degree` | Number of edges connected to this node (higher = more connected) |
+
+## Notes
+
+- Requires `index_graph` to have been run first
+- Average ~47 tokens per result set — ~99.8% reduction vs raw file reads
+- Average latency ~3ms — significantly faster than vector search
+- Use `search_code` instead when you need semantic / behaviour queries

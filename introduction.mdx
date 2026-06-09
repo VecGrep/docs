@@ -1,13 +1,20 @@
 ---
 title: Introduction
-description: Cursor-style semantic code search as an MCP plugin for Claude Code
+description: Semantic code search + knowledge graph as an MCP plugin for Claude Code
 ---
 
 ## What is VecGrep?
 
-VecGrep is a semantic code search tool that works as an MCP (Model Context Protocol) plugin for Claude Code.
+VecGrep is a semantic code search and knowledge graph tool that works as an MCP (Model Context Protocol) plugin for Claude Code.
 
-Instead of grepping 50 files and sending 30,000 tokens to Claude, VecGrep returns the top 8 semantically relevant code chunks (~1,600 tokens). That's a **~95% token reduction** for codebase queries.
+Instead of grepping 50 files and sending 30,000 tokens to Claude, VecGrep returns only what's relevant:
+
+| Mode | Avg tokens | vs raw files | Latency |
+|---|---|---|---|
+| Raw file read | 26,009 | — | — |
+| `search_code` | ~3,007 | −88% | ~83ms |
+| `hybrid_search` | ~3,324 | −87% | ~76ms |
+| `search_graph` | ~47 | −99.8% | ~3ms |
 
 ## How it works
 
@@ -19,26 +26,35 @@ Instead of grepping 50 files and sending 30,000 tokens to Claude, VecGrep return
     Encodes each chunk locally using [`all-MiniLM-L6-v2-code-search-512`](https://huggingface.co/isuruwijesiri/all-MiniLM-L6-v2-code-search-512) (384-dim, ~80MB one-time download) via the fastembed ONNX backend (~100ms startup) or PyTorch.
   </Step>
   <Step title="Store">
-    Saves embeddings and metadata in LanceDB under `~/.vecgrep/<project_hash>/`.
+    Saves embeddings and metadata in LanceDB, and optionally a knowledge graph (`graph.json`), under `~/.vecgrep/<project_hash>/`.
   </Step>
   <Step title="Search">
-    Uses an ANN index (IVF-PQ) for fast approximate search on large codebases.
+    Uses an ANN index (IVF-PQ) for fast approximate search, keyword search over graph nodes, or a blended hybrid of both.
   </Step>
 </Steps>
 
 Incremental re-indexing via mtime/size checks skips unchanged files.
 
+## Which tool to use
+
+| Query type | Tool |
+|---|---|
+| Semantic / behaviour ("how does authentication work") | `search_code` |
+| Structural / navigation ("where is class X defined", "what calls Y") | `search_graph` |
+| Both semantic and structural context needed | `hybrid_search` |
+| Explore call graph or inheritance | `graph_neighbors` |
+
 ## Key features
 
 <CardGroup cols={2}>
-  <Card title="95% token reduction" icon="arrow-down">
-    Returns only the top semantically relevant chunks instead of entire files.
+  <Card title="Up to 99.8% token reduction" icon="arrow-down">
+    Returns only relevant chunks or graph nodes instead of entire files.
   </Card>
   <Card title="Fast startup" icon="bolt">
     ONNX backend starts in ~100ms. No PyTorch required by default.
   </Card>
-  <Card title="Incremental indexing" icon="rotate">
-    Only re-indexes files that have changed since the last run.
+  <Card title="Knowledge graph" icon="diagram-project">
+    AST-based graph index captures calls, imports, inheritance — no LLM required.
   </Card>
   <Card title="Works automatically" icon="wand-magic-sparkles">
     Claude decides when to call VecGrep — no manual invocation needed.
