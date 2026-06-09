@@ -12,7 +12,9 @@ Walks a project directory, extracts semantic code chunks using AST analysis, emb
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `path` | `string` | required | Absolute path to the codebase root directory |
-| `force` | `boolean` | `false` | If `true`, re-indexes all files even if unchanged |
+| `force` | `boolean` | `false` | Re-indexes all files even if unchanged. Required when switching embedding providers. |
+| `watch` | `boolean` | `false` | Start a background file watcher that re-indexes changed files automatically. Local provider only. |
+| `provider` | `string` | `null` | Embedding provider: `"local"` (default), `"openai"`, `"voyage"`, or `"gemini"`. |
 
 ## Example
 
@@ -21,9 +23,38 @@ index_codebase("/path/to/myproject")
 → "Indexed 142 file(s), 1847 chunk(s) added (0 file(s) skipped, unchanged)"
 ```
 
+Force a full rebuild:
+
+```
+index_codebase("/path/to/myproject", force=True)
+```
+
+Use a cloud embedding provider:
+
+```
+index_codebase("/path/to/myproject", provider="openai")
+```
+
+## Provider lock
+
+Once a project is indexed with a provider, re-indexing with a different provider requires `force=True`. This rebuilds the vector table with the correct embedding dimensions for the new provider.
+
+```
+index_codebase("/path/to/myproject", provider="voyage", force=True)
+```
+
+## Live watch
+
+`watch=True` starts a background watcher that detects file saves and re-indexes only changed files automatically. Only supported with the `local` provider — using `watch=True` with a cloud provider returns an error to prevent unbounded API costs.
+
+```
+index_codebase("/path/to/myproject", watch=True)
+```
+
+Use `stop_watching` to stop the watcher.
+
 ## Notes
 
 - Only re-indexes files whose mtime or size has changed since the last run
-- Use `force=true` to rebuild the index from scratch (e.g. after changing the embedding model)
-- The index is stored under `~/.vecgrep/<sha256-of-project-path>/lancedb/` with a `merkle.json` fingerprint file
+- Index is stored under `~/.vecgrep/<sha256-of-project-path>/lancedb/` with a `merkle.json` fingerprint file
 - To also build the knowledge graph (for `search_graph`, `graph_neighbors`, `hybrid_search`), run `index_graph` after indexing

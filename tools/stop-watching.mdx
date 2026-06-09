@@ -1,0 +1,27 @@
+---
+title: stop_watching
+description: Stop the background file watcher for a project
+---
+
+## Overview
+
+Stops the background file watcher that was started by `index_codebase` with `watch=True`. Has no effect if no watcher is active for the given path.
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `path` | `string` | required | Absolute path to the project that is currently being watched |
+
+## Example
+
+```
+stop_watching("/path/to/myproject")
+→ "Stopped watching /path/to/myproject"
+```
+
+## Notes
+
+- Watcher state is persisted to `~/.vecgrep/watched.json` and restored on server restart
+- Calling `stop_watching` removes the project from the persisted watch list
+- If the path is not currently watched, the call returns without error

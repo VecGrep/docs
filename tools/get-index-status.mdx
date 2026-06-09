@@ -5,7 +5,7 @@ description: Check index statistics for a project
 
 ## Overview
 
-Returns statistics about the current index for a project directory.
+Returns statistics about the current index for a project directory, including the embedding provider, model, dimensions, and the default score threshold.
 
 ## Parameters
 
@@ -27,4 +27,23 @@ Index status for: /path/to/myproject
   Total chunks:   1847
   Last indexed:   2026-02-22T07:20:31+00:00
   Index size:     28.4 MB
+  Provider:       local
+  Model:          isuruwijesiri/all-MiniLM-L6-v2-code-search-512
+  Dimensions:     384
+  Compute device: Metal (Apple Silicon)
+  Min score:      0.35 (default, override via search_code min_score param)
 ```
+
+## Output fields
+
+| Field | Description |
+|---|---|
+| `Files indexed` | Number of source files in the index |
+| `Total chunks` | Number of code chunks stored |
+| `Last indexed` | ISO timestamp of the most recent index run |
+| `Index size` | Disk usage of the vector index |
+| `Provider` | Embedding provider in use (`local`, `openai`, `voyage`, or `gemini`) |
+| `Model` | Embedding model identifier |
+| `Dimensions` | Vector dimensionality (384 for local, 1024/1536/3072 for cloud providers) |
+| `Compute device` | Hardware used for local embeddings (`Metal`, `CUDA`, or `CPU`) |
+| `Min score` | Active minimum similarity threshold for `search_code` |

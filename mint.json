@@ -34,6 +34,7 @@
       "group": "Tools",
       "pages": [
         "tools/index-codebase",
+        "tools/stop-watching",
         "tools/search-code",
         "tools/get-index-status",
         "tools/index-graph",

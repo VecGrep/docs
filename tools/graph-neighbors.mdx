@@ -5,39 +5,49 @@ description: Explore the structural neighbourhood of a graph node
 
 ## Overview
 
-Returns the immediate (or multi-hop) structural neighbourhood of a given node in the knowledge graph. Use this to navigate the codebase structure: find what a function calls, what calls it, what it imports, and what class it belongs to.
+Returns the immediate (or multi-hop) structural neighbourhood of a given node in the knowledge graph. Use this to navigate the codebase: find what a function calls, what calls it, what it imports, and what class it belongs to.
 
 ## Parameters
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `node_id` | `string` | required | Node identifier (typically `kind:qualified_name`, e.g. `function:auth.authenticate_user`) |
+| `node_id` | `string` | required | Node ID or label substring (e.g. `"VectorStore"`, `"authenticate_user"`). Use `search_graph` first to find exact IDs. |
 | `path` | `string` | required | Absolute path to the codebase root directory |
-| `depth` | `integer` | `1` | How many hops to traverse (1–4) |
+| `depth` | `integer` | `1` | Number of hops to traverse (1–4) |
 
 ## Example
 
 ```
-graph_neighbors("function:auth.authenticate_user", "/path/to/myproject", depth=1)
+graph_neighbors("VectorStore", "/path/to/myproject", depth=1)
 ```
 
 **Returns:**
 
 ```
-Node: function:auth.authenticate_user (src/auth.py:45-72)
+Node: VectorStore  [class]
+  Source: src/vecgrep/store.py:49-352
+  ID: store_vectorstore
 
-callers (2):
-  function:middleware.require_auth  src/middleware.py:12
-  function:api.login_endpoint       src/api/auth.py:88
+Callers (called by) (18):
+  • _get_store  [function]  src/vecgrep/server.py:136
+  • migrate_project  [function]  src/vecgrep/migrate.py:12
+  ...
 
-callees (3):
-  function:db.get_user_by_token     src/db/users.py:201
-  function:tokens.decode_jwt        src/tokens.py:34
-  function:audit.log_access         src/audit.py:77
-
-contained_by (1):
-  file:src/auth.py
+Contains (18):
+  • search  [method]  src/vecgrep/store.py:292
+  • add_chunks  [method]  src/vecgrep/store.py:180
+  ...
 ```
+
+## Finding node IDs
+
+Node IDs are auto-generated from the file path and symbol name (e.g. `store_vectorstore`, `auth_authenticate_user`). You can pass a label substring instead and VecGrep will find the closest match:
+
+```
+graph_neighbors("authenticate_user", "/path/to/myproject")
+```
+
+Use `search_graph` to browse nodes and discover exact IDs.
 
 ## Relationship directions
 
@@ -46,7 +56,7 @@ contained_by (1):
 | `callers` | Nodes that call this node |
 | `callees` | Nodes this node calls |
 | `imports` | Modules this node imports |
-| `contains` | Child nodes contained by this node |
+| `contains` | Child nodes contained within this node |
 | `contained_by` | Parent node that contains this node |
 | `inherits` | Classes this class inherits from |
 
@@ -54,5 +64,5 @@ contained_by (1):
 
 - Requires `index_graph` to have been run first
 - `depth=1` returns direct neighbours only; higher values traverse transitively
-- Maximum depth is 4 — deeper traversals may return large result sets
+- Maximum depth is 4
 - Node IDs can be discovered via `search_graph`

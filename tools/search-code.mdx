@@ -16,6 +16,7 @@ If the codebase is not yet indexed, it will be indexed automatically first.
 | `query` | `string` | required | Natural language description of what you're looking for |
 | `path` | `string` | required | Absolute path to the codebase root directory |
 | `top_k` | `integer` | `8` | Number of results to return (1–20) |
+| `min_score` | `float` | `0.35` | Minimum cosine similarity threshold. Results below this are filtered out. Set to `0.0` to disable. |
 
 ## Example
 
@@ -39,3 +40,5 @@ def authenticate_user(token: str) -> User:
 - Queries are limited to 500 characters
 - Results include file path, line range, similarity score, and the code snippet
 - Auto-indexes on first call if no index exists for the given path
+- `min_score` is clamped to `[0.0, 1.0]`. The default of `0.35` removes noisy low-confidence matches without affecting relevant results
+- Use `hybrid_search` when you also want graph-structural context in the results

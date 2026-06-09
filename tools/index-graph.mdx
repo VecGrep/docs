@@ -14,13 +14,19 @@ The graph is persisted as `graph.json` alongside the vector index and is used by
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `path` | `string` | required | Absolute path to the codebase root directory |
-| `force` | `boolean` | `false` | If `true`, rebuilds the graph even if `graph.json` already exists |
+| `force` | `boolean` | `false` | If `true`, rebuilds the graph even if one already exists |
 
 ## Example
 
 ```
 index_graph("/path/to/myproject")
-→ "Graph indexed: 312 node(s), 541 edge(s)"
+→ "Graph built for /path/to/myproject: 496 nodes, 1251 edges, 35 files processed."
+```
+
+Rebuild after a major refactor:
+
+```
+index_graph("/path/to/myproject", force=True)
 ```
 
 ## Node kinds
@@ -28,7 +34,7 @@ index_graph("/path/to/myproject")
 | Kind | Description |
 |---|---|
 | `file` | A source file |
-| `function` | A top-level function |
+| `function` | A top-level or module-level function |
 | `class` | A class definition |
 | `method` | A method inside a class |
 
@@ -36,14 +42,15 @@ index_graph("/path/to/myproject")
 
 | Kind | Description |
 |---|---|
-| `contains` | Parent file or class contains a child node |
-| `calls` | A function/method calls another |
+| `contains` | A file or class contains a child node |
+| `calls` | A function or method calls another |
 | `imports` | A file imports another module |
 | `inherits` | A class inherits from another |
 
 ## Notes
 
 - Graph is stored at `~/.vecgrep/<project_hash>/graph.json`
+- Independent of the vector index — can be run before or after `index_codebase`
 - Runs entirely locally — no network calls, no LLM
-- Use `force=true` after significant refactors to rebuild from scratch
 - `hybrid_search` degrades gracefully to pure vector search if no graph index exists
+- Use `force=True` after significant refactors to rebuild from scratch
